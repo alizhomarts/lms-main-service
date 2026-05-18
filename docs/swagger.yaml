@@ -1,0 +1,530 @@
+basePath: /api/v1
+definitions:
+  dto.CreateChapterRequest:
+    properties:
+      course_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    required:
+    - course_id
+    - name
+    - order
+    type: object
+  dto.CreateCourseRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CreateLessonRequest:
+    properties:
+      chapter_id:
+        type: integer
+      content:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    required:
+    - chapter_id
+    - content
+    - name
+    - order
+    type: object
+  dto.UpdateChapterRequest:
+    properties:
+      course_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    required:
+    - course_id
+    - name
+    - order
+    type: object
+  dto.UpdateCourseRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.UpdateLessonRequest:
+    properties:
+      chapter_id:
+        type: integer
+      content:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    required:
+    - chapter_id
+    - content
+    - name
+    - order
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Main Service for managing courses, chapters, and lessons in LMS System.
+  title: LMS Main Service API
+  version: "1.0"
+paths:
+  /chapters:
+    get:
+      description: Get list of all chapters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all chapters
+      tags:
+      - chapters
+    post:
+      consumes:
+      - application/json
+      description: Create a new chapter for a course
+      parameters:
+      - description: Chapter payload
+        in: body
+        name: chapter
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateChapterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new chapter
+      tags:
+      - chapters
+  /chapters/{id}:
+    delete:
+      description: Delete chapter by ID
+      parameters:
+      - description: Chapter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete chapter
+      tags:
+      - chapters
+    get:
+      description: Get chapter details by ID
+      parameters:
+      - description: Chapter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get chapter by ID
+      tags:
+      - chapters
+    put:
+      consumes:
+      - application/json
+      description: Update chapter by ID
+      parameters:
+      - description: Chapter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Chapter payload
+        in: body
+        name: chapter
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateChapterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update chapter
+      tags:
+      - chapters
+  /courses:
+    get:
+      description: Get list of all courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all courses
+      tags:
+      - courses
+    post:
+      consumes:
+      - application/json
+      description: Create a new course in LMS
+      parameters:
+      - description: Course payload
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCourseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new course
+      tags:
+      - courses
+  /courses/{id}:
+    delete:
+      description: Delete course by ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete course
+      tags:
+      - courses
+    get:
+      description: Get course details by ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course by ID
+      tags:
+      - courses
+    put:
+      consumes:
+      - application/json
+      description: Update course by ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Course payload
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCourseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update course
+      tags:
+      - courses
+  /lessons:
+    get:
+      description: Get list of all lessons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all lessons
+      tags:
+      - lessons
+    post:
+      consumes:
+      - application/json
+      description: Create a new lesson for a chapter
+      parameters:
+      - description: Lesson payload
+        in: body
+        name: lesson
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateLessonRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new lesson
+      tags:
+      - lessons
+  /lessons/{id}:
+    delete:
+      description: Delete lesson by ID
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete lesson
+      tags:
+      - lessons
+    get:
+      description: Get lesson details by ID
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get lesson by ID
+      tags:
+      - lessons
+    put:
+      consumes:
+      - application/json
+      description: Update lesson by ID
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lesson payload
+        in: body
+        name: lesson
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateLessonRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update lesson
+      tags:
+      - lessons
+swagger: "2.0"
