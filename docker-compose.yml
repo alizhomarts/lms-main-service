@@ -16,5 +16,22 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build: .
+    container_name: lms_main_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: lms_db
+      DB_SSLMODE: disable
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:
