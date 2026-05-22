@@ -8,5 +8,5 @@ type Course struct {
 	Description string    `gorm:"type:text" json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Chapters    []Chapter `gorm:"foreignKey:CourseID" json:"chapters,omitempty"`
+	Chapters    []Chapter `gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE;" json:"chapters,omitempty"`
 }

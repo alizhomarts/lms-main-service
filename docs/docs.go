@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/chapters": {
             "get": {
-                "description": "Get list of all chapters",
+                "description": "Get paginated list of all chapters",
                 "produces": [
                     "application/json"
                 ],
@@ -25,6 +25,22 @@ const docTemplate = `{
                     "chapters"
                 ],
                 "summary": "Get all chapters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -232,7 +248,7 @@ const docTemplate = `{
         },
         "/courses": {
             "get": {
-                "description": "Get list of all courses",
+                "description": "Get paginated list of courses",
                 "produces": [
                     "application/json"
                 ],
@@ -240,6 +256,22 @@ const docTemplate = `{
                     "courses"
                 ],
                 "summary": "Get all courses",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -440,7 +472,7 @@ const docTemplate = `{
         },
         "/lessons": {
             "get": {
-                "description": "Get list of all lessons",
+                "description": "Get paginated list of all lessons",
                 "produces": [
                     "application/json"
                 ],
@@ -448,6 +480,22 @@ const docTemplate = `{
                     "lessons"
                 ],
                 "summary": "Get all lessons",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

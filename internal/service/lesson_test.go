@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -15,6 +16,8 @@ func TestLessonService_Create_Success(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
 
+	ctx := context.Background()
+
 	lesson := &entity.Lesson{
 		Name:        "If-else Statement in Golang",
 		Description: "This lesson explains conditional branching in Go.",
@@ -24,16 +27,16 @@ func TestLessonService_Create_Success(t *testing.T) {
 	}
 
 	repo.
-		On("ChapterExists", lesson.ChapterID).
+		On("ChapterExists", mock.Anything, lesson.ChapterID).
 		Return(true, nil).
 		Once()
 
 	repo.
-		On("Create", lesson).
+		On("Create", mock.Anything, lesson).
 		Return(nil).
 		Once()
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -43,6 +46,8 @@ func TestLessonService_Create_NameRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
 
+	ctx := context.Background()
+
 	lesson := &entity.Lesson{
 		Name:        "",
 		Description: "This lesson explains conditional branching in Go.",
@@ -51,18 +56,20 @@ func TestLessonService_Create_NameRequired(t *testing.T) {
 		ChapterID:   1,
 	}
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonNameRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 }
 
 func TestLessonService_Create_ContentRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	lesson := &entity.Lesson{
 		Name:        "If-else Statement in Golang",
@@ -72,18 +79,20 @@ func TestLessonService_Create_ContentRequired(t *testing.T) {
 		ChapterID:   1,
 	}
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonContentRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 }
 
 func TestLessonService_Create_OrderRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	lesson := &entity.Lesson{
 		Name:        "If-else Statement in Golang",
@@ -93,18 +102,20 @@ func TestLessonService_Create_OrderRequired(t *testing.T) {
 		ChapterID:   1,
 	}
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonOrderRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 }
 
 func TestLessonService_Create_ChapterIDRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	lesson := &entity.Lesson{
 		Name:        "If-else Statement in Golang",
@@ -114,18 +125,20 @@ func TestLessonService_Create_ChapterIDRequired(t *testing.T) {
 		ChapterID:   0,
 	}
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrChapterIDRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 }
 
 func TestLessonService_Create_ChapterNotFound(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	lesson := &entity.Lesson{
 		Name:        "If-else Statement in Golang",
@@ -136,22 +149,26 @@ func TestLessonService_Create_ChapterNotFound(t *testing.T) {
 	}
 
 	repo.
-		On("ChapterExists", uint(999)).
+		On("ChapterExists", mock.Anything, uint(999)).
 		Return(false, nil).
 		Once()
 
-	err := lessonService.Create(lesson)
+	err := lessonService.Create(ctx, lesson)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrChapterNotFound))
 
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_GetAll_Success(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
+	limit := 10
+	offset := 0
 
 	expectedLessons := []entity.Lesson{
 		{
@@ -173,11 +190,11 @@ func TestLessonService_GetAll_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetAll").
+		On("GetAll", mock.Anything, limit, offset).
 		Return(expectedLessons, nil).
 		Once()
 
-	lessons, err := lessonService.GetAll()
+	lessons, err := lessonService.GetAll(ctx, limit, offset)
 
 	assert.NoError(t, err)
 	assert.Len(t, lessons, 2)
@@ -191,6 +208,8 @@ func TestLessonService_GetByID_Success(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
 
+	ctx := context.Background()
+
 	expectedLesson := &entity.Lesson{
 		ID:          1,
 		Name:        "If-else Statement in Golang",
@@ -201,11 +220,11 @@ func TestLessonService_GetByID_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(expectedLesson, nil).
 		Once()
 
-	lesson, err := lessonService.GetByID(1)
+	lesson, err := lessonService.GetByID(ctx, 1)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, lesson)
@@ -219,12 +238,14 @@ func TestLessonService_GetByID_NotFound(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
 
+	ctx := context.Background()
+
 	repo.
-		On("GetByID", uint(999)).
+		On("GetByID", mock.Anything, uint(999)).
 		Return((*entity.Lesson)(nil), gorm.ErrRecordNotFound).
 		Once()
 
-	lesson, err := lessonService.GetByID(999)
+	lesson, err := lessonService.GetByID(ctx, 999)
 
 	assert.Error(t, err)
 	assert.Nil(t, lesson)
@@ -236,6 +257,8 @@ func TestLessonService_GetByID_NotFound(t *testing.T) {
 func TestLessonService_Update_Success(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -255,17 +278,17 @@ func TestLessonService_Update_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
 	repo.
-		On("ChapterExists", uint(1)).
+		On("ChapterExists", mock.Anything, uint(1)).
 		Return(true, nil).
 		Once()
 
 	repo.
-		On("Update", mock.MatchedBy(func(lesson *entity.Lesson) bool {
+		On("Update", mock.Anything, mock.MatchedBy(func(lesson *entity.Lesson) bool {
 			return lesson.ID == 1 &&
 				lesson.Name == "If-else and Conditional Statements in Go" &&
 				lesson.Description == "Updated description" &&
@@ -276,7 +299,7 @@ func TestLessonService_Update_Success(t *testing.T) {
 		Return(nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -285,6 +308,8 @@ func TestLessonService_Update_Success(t *testing.T) {
 func TestLessonService_Update_NotFound(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	updateData := &entity.Lesson{
 		Name:        "If-else and Conditional Statements in Go",
@@ -295,23 +320,25 @@ func TestLessonService_Update_NotFound(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(999)).
+		On("GetByID", mock.Anything, uint(999)).
 		Return((*entity.Lesson)(nil), gorm.ErrRecordNotFound).
 		Once()
 
-	err := lessonService.Update(999, updateData)
+	err := lessonService.Update(ctx, 999, updateData)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Update_NameRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -331,23 +358,25 @@ func TestLessonService_Update_NameRequired(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonNameRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Update_ContentRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -367,23 +396,25 @@ func TestLessonService_Update_ContentRequired(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonContentRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Update_OrderRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -403,23 +434,25 @@ func TestLessonService_Update_OrderRequired(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrLessonOrderRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Update_ChapterIDRequired(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -439,23 +472,25 @@ func TestLessonService_Update_ChapterIDRequired(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrChapterIDRequired))
 
-	repo.AssertNotCalled(t, "ChapterExists", mock.Anything)
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "ChapterExists", mock.Anything, mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Update_ChapterNotFound(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -475,27 +510,29 @@ func TestLessonService_Update_ChapterNotFound(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
 	repo.
-		On("ChapterExists", uint(999)).
+		On("ChapterExists", mock.Anything, uint(999)).
 		Return(false, nil).
 		Once()
 
-	err := lessonService.Update(1, updateData)
+	err := lessonService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrChapterNotFound))
 
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestLessonService_Delete_Success(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
+
+	ctx := context.Background()
 
 	existingLesson := &entity.Lesson{
 		ID:          1,
@@ -507,16 +544,16 @@ func TestLessonService_Delete_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingLesson, nil).
 		Once()
 
 	repo.
-		On("Delete", uint(1)).
+		On("Delete", mock.Anything, uint(1)).
 		Return(nil).
 		Once()
 
-	err := lessonService.Delete(1)
+	err := lessonService.Delete(ctx, 1)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -526,16 +563,18 @@ func TestLessonService_Delete_NotFound(t *testing.T) {
 	repo := new(mocks.LessonRepository)
 	lessonService := NewLessonService(repo)
 
+	ctx := context.Background()
+
 	repo.
-		On("GetByID", uint(999)).
+		On("GetByID", mock.Anything, uint(999)).
 		Return((*entity.Lesson)(nil), gorm.ErrRecordNotFound).
 		Once()
 
-	err := lessonService.Delete(999)
+	err := lessonService.Delete(ctx, 999)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
 
-	repo.AssertNotCalled(t, "Delete", mock.Anything)
+	repo.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }

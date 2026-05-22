@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	context "context"
 	entity "lms-main-service/internal/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -13,9 +14,9 @@ type LessonRepository struct {
 	mock.Mock
 }
 
-// ChapterExists provides a mock function with given fields: chapterID
-func (_m *LessonRepository) ChapterExists(chapterID uint) (bool, error) {
-	ret := _m.Called(chapterID)
+// ChapterExists provides a mock function with given fields: ctx, chapterID
+func (_m *LessonRepository) ChapterExists(ctx context.Context, chapterID uint) (bool, error) {
+	ret := _m.Called(ctx, chapterID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ChapterExists")
@@ -23,17 +24,17 @@ func (_m *LessonRepository) ChapterExists(chapterID uint) (bool, error) {
 
 	var r0 bool
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (bool, error)); ok {
-		return rf(chapterID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) (bool, error)); ok {
+		return rf(ctx, chapterID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) bool); ok {
-		r0 = rf(chapterID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) bool); ok {
+		r0 = rf(ctx, chapterID)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(chapterID)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, chapterID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,17 +42,17 @@ func (_m *LessonRepository) ChapterExists(chapterID uint) (bool, error) {
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: lesson
-func (_m *LessonRepository) Create(lesson *entity.Lesson) error {
-	ret := _m.Called(lesson)
+// Create provides a mock function with given fields: ctx, lesson
+func (_m *LessonRepository) Create(ctx context.Context, lesson *entity.Lesson) error {
+	ret := _m.Called(ctx, lesson)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Lesson) error); ok {
-		r0 = rf(lesson)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Lesson) error); ok {
+		r0 = rf(ctx, lesson)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -59,17 +60,17 @@ func (_m *LessonRepository) Create(lesson *entity.Lesson) error {
 	return r0
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *LessonRepository) Delete(id uint) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *LessonRepository) Delete(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -77,9 +78,9 @@ func (_m *LessonRepository) Delete(id uint) error {
 	return r0
 }
 
-// GetAll provides a mock function with no fields
-func (_m *LessonRepository) GetAll() ([]entity.Lesson, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx, limit, offset
+func (_m *LessonRepository) GetAll(ctx context.Context, limit int, offset int) ([]entity.Lesson, error) {
+	ret := _m.Called(ctx, limit, offset)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAll")
@@ -87,19 +88,19 @@ func (_m *LessonRepository) GetAll() ([]entity.Lesson, error) {
 
 	var r0 []entity.Lesson
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]entity.Lesson, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]entity.Lesson, error)); ok {
+		return rf(ctx, limit, offset)
 	}
-	if rf, ok := ret.Get(0).(func() []entity.Lesson); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) []entity.Lesson); ok {
+		r0 = rf(ctx, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.Lesson)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -107,9 +108,9 @@ func (_m *LessonRepository) GetAll() ([]entity.Lesson, error) {
 	return r0, r1
 }
 
-// GetByID provides a mock function with given fields: id
-func (_m *LessonRepository) GetByID(id uint) (*entity.Lesson, error) {
-	ret := _m.Called(id)
+// GetByID provides a mock function with given fields: ctx, id
+func (_m *LessonRepository) GetByID(ctx context.Context, id uint) (*entity.Lesson, error) {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByID")
@@ -117,19 +118,19 @@ func (_m *LessonRepository) GetByID(id uint) (*entity.Lesson, error) {
 
 	var r0 *entity.Lesson
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*entity.Lesson, error)); ok {
-		return rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) (*entity.Lesson, error)); ok {
+		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *entity.Lesson); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) *entity.Lesson); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Lesson)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -137,17 +138,17 @@ func (_m *LessonRepository) GetByID(id uint) (*entity.Lesson, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: lesson
-func (_m *LessonRepository) Update(lesson *entity.Lesson) error {
-	ret := _m.Called(lesson)
+// Update provides a mock function with given fields: ctx, lesson
+func (_m *LessonRepository) Update(ctx context.Context, lesson *entity.Lesson) error {
+	ret := _m.Called(ctx, lesson)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Lesson) error); ok {
-		r0 = rf(lesson)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Lesson) error); ok {
+		r0 = rf(ctx, lesson)
 	} else {
 		r0 = ret.Error(0)
 	}

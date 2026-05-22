@@ -13,10 +13,14 @@ import (
 
 type ChapterHandler struct {
 	service service.ChapterService
+	logger  *logrus.Logger
 }
 
-func NewChapterHandler(service service.ChapterService) *ChapterHandler {
-	return &ChapterHandler{service: service}
+func NewChapterHandler(service service.ChapterService, logger *logrus.Logger) *ChapterHandler {
+	return &ChapterHandler{
+		service: service,
+		logger:  logger,
+	}
 }
 
 // CreateChapter godoc
@@ -31,6 +35,8 @@ func NewChapterHandler(service service.ChapterService) *ChapterHandler {
 // @Failure 404 {object} map[string]interface{}
 // @Router /chapters [post]
 func (h *ChapterHandler) Create(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	var req dto.CreateChapterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -45,13 +51,13 @@ func (h *ChapterHandler) Create(c *gin.Context) {
 		CourseID:    req.CourseID,
 	}
 
-	if err := h.service.Create(&chapter); err != nil {
+	if err := h.service.Create(ctx, &chapter); err != nil {
 		status := apperror.StatusCode(err)
 		response.Error(c, status, err)
 		return
 	}
 
-	logrus.WithFields(logrus.Fields{
+	h.logger.WithFields(logrus.Fields{
 		"chapter_id": chapter.ID,
 		"name":       chapter.Name,
 		"course_id":  chapter.CourseID,
@@ -62,14 +68,20 @@ func (h *ChapterHandler) Create(c *gin.Context) {
 
 // GetAllChapters godoc
 // @Summary Get all chapters
-// @Description Get list of all chapters
+// @Description Get paginated list of all chapters
 // @Tags chapters
 // @Produce json
+// @Param limit query int false "Limit" default(10)
+// @Param offset query int false "Offset" default(0)
 // @Success 200 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /chapters [get]
 func (h *ChapterHandler) GetAll(c *gin.Context) {
-	chapters, err := h.service.GetAll()
+	ctx := c.Request.Context()
+
+	limit, offset := parsePagination(c)
+
+	chapters, err := h.service.GetAll(ctx, limit, offset)
 	if err != nil {
 		response.ErrorMessage(c, http.StatusInternalServerError, "failed to get chapters")
 		return
@@ -89,16 +101,17 @@ func (h *ChapterHandler) GetAll(c *gin.Context) {
 // @Failure 404 {object} map[string]interface{}
 // @Router /chapters/{id} [get]
 func (h *ChapterHandler) GetByID(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	id, err := parseID(c.Param("id"))
 	if err != nil {
 		response.ErrorMessage(c, http.StatusBadRequest, "invalid chapter id")
 		return
 	}
 
-	chapter, err := h.service.GetByID(id)
+	chapter, err := h.service.GetByID(ctx, id)
 	if err != nil {
 		status := apperror.StatusCode(err)
-
 		response.Error(c, status, err)
 		return
 	}
@@ -119,6 +132,8 @@ func (h *ChapterHandler) GetByID(c *gin.Context) {
 // @Failure 404 {object} map[string]interface{}
 // @Router /chapters/{id} [put]
 func (h *ChapterHandler) Update(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	id, err := parseID(c.Param("id"))
 	if err != nil {
 		response.ErrorMessage(c, http.StatusBadRequest, "invalid chapter id")
@@ -139,13 +154,13 @@ func (h *ChapterHandler) Update(c *gin.Context) {
 		CourseID:    req.CourseID,
 	}
 
-	if err := h.service.Update(id, &chapter); err != nil {
+	if err := h.service.Update(ctx, id, &chapter); err != nil {
 		status := apperror.StatusCode(err)
 		response.Error(c, status, err)
 		return
 	}
 
-	logrus.WithFields(logrus.Fields{
+	h.logger.WithFields(logrus.Fields{
 		"chapter_id": id,
 		"name":       chapter.Name,
 		"course_id":  chapter.CourseID,
@@ -165,20 +180,21 @@ func (h *ChapterHandler) Update(c *gin.Context) {
 // @Failure 404 {object} map[string]interface{}
 // @Router /chapters/{id} [delete]
 func (h *ChapterHandler) Delete(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	id, err := parseID(c.Param("id"))
 	if err != nil {
 		response.ErrorMessage(c, http.StatusBadRequest, "invalid chapter id")
 		return
 	}
 
-	if err := h.service.Delete(id); err != nil {
+	if err := h.service.Delete(ctx, id); err != nil {
 		status := apperror.StatusCode(err)
-
 		response.Error(c, status, err)
 		return
 	}
 
-	logrus.WithField("chapter_id", id).Info("chapter deleted")
+	h.logger.WithField("chapter_id", id).Info("chapter deleted")
 
 	response.SuccessMessage(c, http.StatusOK, "chapter deleted successfully")
 }

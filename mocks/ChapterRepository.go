@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	context "context"
 	entity "lms-main-service/internal/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -13,9 +14,9 @@ type ChapterRepository struct {
 	mock.Mock
 }
 
-// CourseExists provides a mock function with given fields: courseID
-func (_m *ChapterRepository) CourseExists(courseID uint) (bool, error) {
-	ret := _m.Called(courseID)
+// CourseExists provides a mock function with given fields: ctx, courseID
+func (_m *ChapterRepository) CourseExists(ctx context.Context, courseID uint) (bool, error) {
+	ret := _m.Called(ctx, courseID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CourseExists")
@@ -23,17 +24,17 @@ func (_m *ChapterRepository) CourseExists(courseID uint) (bool, error) {
 
 	var r0 bool
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (bool, error)); ok {
-		return rf(courseID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) (bool, error)); ok {
+		return rf(ctx, courseID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) bool); ok {
-		r0 = rf(courseID)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) bool); ok {
+		r0 = rf(ctx, courseID)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(courseID)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, courseID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,17 +42,17 @@ func (_m *ChapterRepository) CourseExists(courseID uint) (bool, error) {
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: chapter
-func (_m *ChapterRepository) Create(chapter *entity.Chapter) error {
-	ret := _m.Called(chapter)
+// Create provides a mock function with given fields: ctx, chapter
+func (_m *ChapterRepository) Create(ctx context.Context, chapter *entity.Chapter) error {
+	ret := _m.Called(ctx, chapter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Chapter) error); ok {
-		r0 = rf(chapter)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Chapter) error); ok {
+		r0 = rf(ctx, chapter)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -59,17 +60,17 @@ func (_m *ChapterRepository) Create(chapter *entity.Chapter) error {
 	return r0
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *ChapterRepository) Delete(id uint) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *ChapterRepository) Delete(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -77,9 +78,9 @@ func (_m *ChapterRepository) Delete(id uint) error {
 	return r0
 }
 
-// GetAll provides a mock function with no fields
-func (_m *ChapterRepository) GetAll() ([]entity.Chapter, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx, limit, offset
+func (_m *ChapterRepository) GetAll(ctx context.Context, limit int, offset int) ([]entity.Chapter, error) {
+	ret := _m.Called(ctx, limit, offset)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAll")
@@ -87,19 +88,19 @@ func (_m *ChapterRepository) GetAll() ([]entity.Chapter, error) {
 
 	var r0 []entity.Chapter
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]entity.Chapter, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]entity.Chapter, error)); ok {
+		return rf(ctx, limit, offset)
 	}
-	if rf, ok := ret.Get(0).(func() []entity.Chapter); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) []entity.Chapter); ok {
+		r0 = rf(ctx, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.Chapter)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -107,9 +108,9 @@ func (_m *ChapterRepository) GetAll() ([]entity.Chapter, error) {
 	return r0, r1
 }
 
-// GetByID provides a mock function with given fields: id
-func (_m *ChapterRepository) GetByID(id uint) (*entity.Chapter, error) {
-	ret := _m.Called(id)
+// GetByID provides a mock function with given fields: ctx, id
+func (_m *ChapterRepository) GetByID(ctx context.Context, id uint) (*entity.Chapter, error) {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByID")
@@ -117,19 +118,19 @@ func (_m *ChapterRepository) GetByID(id uint) (*entity.Chapter, error) {
 
 	var r0 *entity.Chapter
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*entity.Chapter, error)); ok {
-		return rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) (*entity.Chapter, error)); ok {
+		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *entity.Chapter); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) *entity.Chapter); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Chapter)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -137,17 +138,17 @@ func (_m *ChapterRepository) GetByID(id uint) (*entity.Chapter, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: chapter
-func (_m *ChapterRepository) Update(chapter *entity.Chapter) error {
-	ret := _m.Called(chapter)
+// Update provides a mock function with given fields: ctx, chapter
+func (_m *ChapterRepository) Update(ctx context.Context, chapter *entity.Chapter) error {
+	ret := _m.Called(ctx, chapter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Chapter) error); ok {
-		r0 = rf(chapter)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Chapter) error); ok {
+		r0 = rf(ctx, chapter)
 	} else {
 		r0 = ret.Error(0)
 	}

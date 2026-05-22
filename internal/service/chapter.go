@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"lms-main-service/internal/apperror"
 	"lms-main-service/internal/entity"
 	"lms-main-service/internal/repository"
@@ -8,11 +9,11 @@ import (
 
 type (
 	ChapterService interface {
-		Create(chapter *entity.Chapter) error
-		GetAll() ([]entity.Chapter, error)
-		GetByID(id uint) (*entity.Chapter, error)
-		Update(id uint, chapter *entity.Chapter) error
-		Delete(id uint) error
+		Create(ctx context.Context, chapter *entity.Chapter) error
+		GetAll(ctx context.Context, limit, offset int) ([]entity.Chapter, error)
+		GetByID(ctx context.Context, id uint) (*entity.Chapter, error)
+		Update(ctx context.Context, id uint, chapter *entity.Chapter) error
+		Delete(ctx context.Context, id uint) error
 	}
 	chapterService struct {
 		repo repository.ChapterRepository
@@ -20,10 +21,12 @@ type (
 )
 
 func NewChapterService(repo repository.ChapterRepository) ChapterService {
-	return &chapterService{repo: repo}
+	return &chapterService{
+		repo: repo,
+	}
 }
 
-func (s *chapterService) Create(chapter *entity.Chapter) error {
+func (s *chapterService) Create(ctx context.Context, chapter *entity.Chapter) error {
 	if chapter.Name == "" {
 		return apperror.ErrChapterNameRequired
 	}
@@ -36,7 +39,7 @@ func (s *chapterService) Create(chapter *entity.Chapter) error {
 		return apperror.ErrCourseIDRequired
 	}
 
-	exists, err := s.repo.CourseExists(chapter.CourseID)
+	exists, err := s.repo.CourseExists(ctx, chapter.CourseID)
 	if err != nil {
 		return err
 	}
@@ -45,19 +48,19 @@ func (s *chapterService) Create(chapter *entity.Chapter) error {
 		return apperror.ErrCourseNotFound
 	}
 
-	return s.repo.Create(chapter)
+	return s.repo.Create(ctx, chapter)
 }
 
-func (s *chapterService) GetAll() ([]entity.Chapter, error) {
-	return s.repo.GetAll()
+func (s *chapterService) GetAll(ctx context.Context, limit, offset int) ([]entity.Chapter, error) {
+	return s.repo.GetAll(ctx, limit, offset)
 }
 
-func (s *chapterService) GetByID(id uint) (*entity.Chapter, error) {
-	return s.repo.GetByID(id)
+func (s *chapterService) GetByID(ctx context.Context, id uint) (*entity.Chapter, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
-func (s *chapterService) Update(id uint, chapter *entity.Chapter) error {
-	existingChapter, err := s.repo.GetByID(id)
+func (s *chapterService) Update(ctx context.Context, id uint, chapter *entity.Chapter) error {
+	existingChapter, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -74,7 +77,7 @@ func (s *chapterService) Update(id uint, chapter *entity.Chapter) error {
 		return apperror.ErrCourseIDRequired
 	}
 
-	exists, err := s.repo.CourseExists(chapter.CourseID)
+	exists, err := s.repo.CourseExists(ctx, chapter.CourseID)
 	if err != nil {
 		return err
 	}
@@ -88,14 +91,14 @@ func (s *chapterService) Update(id uint, chapter *entity.Chapter) error {
 	existingChapter.Order = chapter.Order
 	existingChapter.CourseID = chapter.CourseID
 
-	return s.repo.Update(existingChapter)
+	return s.repo.Update(ctx, existingChapter)
 }
 
-func (s *chapterService) Delete(id uint) error {
-	_, err := s.repo.GetByID(id)
+func (s *chapterService) Delete(ctx context.Context, id uint) error {
+	_, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	return s.repo.Delete(id)
+	return s.repo.Delete(ctx, id)
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -15,17 +16,19 @@ func TestCourseService_Create_Success(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
 
+	ctx := context.Background()
+
 	course := &entity.Course{
 		Name:        "Golang Developer",
 		Description: "Backend development course with Go",
 	}
 
 	repo.
-		On("Create", course).
+		On("Create", mock.Anything, course).
 		Return(nil).
 		Once()
 
-	err := courseService.Create(course)
+	err := courseService.Create(ctx, course)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -35,22 +38,28 @@ func TestCourseService_Create_NameRequired(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
 
+	ctx := context.Background()
+
 	course := &entity.Course{
 		Name:        "",
 		Description: "Course without name",
 	}
 
-	err := courseService.Create(course)
+	err := courseService.Create(ctx, course)
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, apperror.ErrCourseNameRequired))
 
-	repo.AssertNotCalled(t, "Create", mock.Anything)
+	repo.AssertNotCalled(t, "Create", mock.Anything, mock.Anything)
 }
 
 func TestCourseService_GetAll_Success(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
+
+	ctx := context.Background()
+	limit := 10
+	offset := 0
 
 	expectedCourses := []entity.Course{
 		{
@@ -66,11 +75,11 @@ func TestCourseService_GetAll_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetAll").
+		On("GetAll", mock.Anything, limit, offset).
 		Return(expectedCourses, nil).
 		Once()
 
-	courses, err := courseService.GetAll()
+	courses, err := courseService.GetAll(ctx, limit, offset)
 
 	assert.NoError(t, err)
 	assert.Len(t, courses, 2)
@@ -84,6 +93,8 @@ func TestCourseService_GetByID_Success(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
 
+	ctx := context.Background()
+
 	expectedCourse := &entity.Course{
 		ID:          1,
 		Name:        "Golang Developer",
@@ -91,11 +102,11 @@ func TestCourseService_GetByID_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(expectedCourse, nil).
 		Once()
 
-	course, err := courseService.GetByID(1)
+	course, err := courseService.GetByID(ctx, 1)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, course)
@@ -109,12 +120,14 @@ func TestCourseService_GetByID_NotFound(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
 
+	ctx := context.Background()
+
 	repo.
-		On("GetByID", uint(999)).
+		On("GetByID", mock.Anything, uint(999)).
 		Return((*entity.Course)(nil), gorm.ErrRecordNotFound).
 		Once()
 
-	course, err := courseService.GetByID(999)
+	course, err := courseService.GetByID(ctx, 999)
 
 	assert.Error(t, err)
 	assert.Nil(t, course)
@@ -126,6 +139,8 @@ func TestCourseService_GetByID_NotFound(t *testing.T) {
 func TestCourseService_Update_Success(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
+
+	ctx := context.Background()
 
 	existingCourse := &entity.Course{
 		ID:          1,
@@ -139,12 +154,12 @@ func TestCourseService_Update_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingCourse, nil).
 		Once()
 
 	repo.
-		On("Update", mock.MatchedBy(func(course *entity.Course) bool {
+		On("Update", mock.Anything, mock.MatchedBy(func(course *entity.Course) bool {
 			return course.ID == 1 &&
 				course.Name == "Advanced Golang Developer" &&
 				course.Description == "Updated description"
@@ -152,7 +167,7 @@ func TestCourseService_Update_Success(t *testing.T) {
 		Return(nil).
 		Once()
 
-	err := courseService.Update(1, updateData)
+	err := courseService.Update(ctx, 1, updateData)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -161,6 +176,8 @@ func TestCourseService_Update_Success(t *testing.T) {
 func TestCourseService_Update_NameRequired(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
+
+	ctx := context.Background()
 
 	existingCourse := &entity.Course{
 		ID:          1,
@@ -174,22 +191,24 @@ func TestCourseService_Update_NameRequired(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingCourse, nil).
 		Once()
 
-	err := courseService.Update(1, updateData)
+	err := courseService.Update(ctx, 1, updateData)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, apperror.ErrCourseNameRequired)
 
-	repo.AssertNotCalled(t, "Update", mock.Anything)
+	repo.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }
 
 func TestCourseService_Delete_Success(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
+
+	ctx := context.Background()
 
 	existingCourse := &entity.Course{
 		ID:          1,
@@ -198,16 +217,16 @@ func TestCourseService_Delete_Success(t *testing.T) {
 	}
 
 	repo.
-		On("GetByID", uint(1)).
+		On("GetByID", mock.Anything, uint(1)).
 		Return(existingCourse, nil).
 		Once()
 
 	repo.
-		On("Delete", uint(1)).
+		On("Delete", mock.Anything, uint(1)).
 		Return(nil).
 		Once()
 
-	err := courseService.Delete(1)
+	err := courseService.Delete(ctx, 1)
 
 	assert.NoError(t, err)
 	repo.AssertExpectations(t)
@@ -217,16 +236,18 @@ func TestCourseService_Delete_NotFound(t *testing.T) {
 	repo := new(mocks.CourseRepository)
 	courseService := NewCourseService(repo)
 
+	ctx := context.Background()
+
 	repo.
-		On("GetByID", uint(999)).
+		On("GetByID", mock.Anything, uint(999)).
 		Return((*entity.Course)(nil), gorm.ErrRecordNotFound).
 		Once()
 
-	err := courseService.Delete(999)
+	err := courseService.Delete(ctx, 999)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
 
-	repo.AssertNotCalled(t, "Delete", mock.Anything)
+	repo.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
 	repo.AssertExpectations(t)
 }

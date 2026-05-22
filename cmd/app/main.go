@@ -29,17 +29,21 @@ func main() {
 
 	logrus.Info("Successfully connected to Database")
 
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+
 	courseRepo := repository.NewCourseRepository(db)
 	courseService := service.NewCourseService(courseRepo)
-	courseHandler := handler.NewCourseHandler(courseService)
+	courseHandler := handler.NewCourseHandler(courseService, logger)
 
 	chapterRepo := repository.NewChapterRepository(db)
 	chapterService := service.NewChapterService(chapterRepo)
-	chapterHandler := handler.NewChapterHandler(chapterService)
+	chapterHandler := handler.NewChapterHandler(chapterService, logger)
 
 	lessonRepo := repository.NewLessonRepository(db)
 	lessonService := service.NewLessonService(lessonRepo)
-	lessonHandler := handler.NewLessonHandler(lessonService)
+	lessonHandler := handler.NewLessonHandler(lessonService, logger)
 
 	appRouter := router.NewRouter(courseHandler, chapterHandler, lessonHandler)
 	appRouter.SetupRoutes()

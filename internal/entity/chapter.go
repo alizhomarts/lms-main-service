@@ -10,5 +10,5 @@ type Chapter struct {
 	CourseID    uint      `gorm:"not null" json:"course_id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Lessons     []Lesson  `gorm:"foreignKey:ChapterID" json:"lessons,omitempty"`
+	Lessons     []Lesson  `gorm:"foreignKey:ChapterID;constraint:OnDelete:CASCADE;" json:"lessons,omitempty"`
 }

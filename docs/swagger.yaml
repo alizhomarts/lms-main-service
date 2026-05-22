@@ -93,7 +93,18 @@ info:
 paths:
   /chapters:
     get:
-      description: Get list of all chapters
+      description: Get paginated list of all chapters
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -240,7 +251,18 @@ paths:
       - chapters
   /courses:
     get:
-      description: Get list of all courses
+      description: Get paginated list of courses
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -382,7 +404,18 @@ paths:
       - courses
   /lessons:
     get:
-      description: Get list of all lessons
+      description: Get paginated list of all lessons
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:

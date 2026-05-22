@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	context "context"
 	entity "lms-main-service/internal/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -13,17 +14,17 @@ type CourseRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: course
-func (_m *CourseRepository) Create(course *entity.Course) error {
-	ret := _m.Called(course)
+// Create provides a mock function with given fields: ctx, course
+func (_m *CourseRepository) Create(ctx context.Context, course *entity.Course) error {
+	ret := _m.Called(ctx, course)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Course) error); ok {
-		r0 = rf(course)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Course) error); ok {
+		r0 = rf(ctx, course)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -31,17 +32,17 @@ func (_m *CourseRepository) Create(course *entity.Course) error {
 	return r0
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *CourseRepository) Delete(id uint) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *CourseRepository) Delete(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -49,9 +50,9 @@ func (_m *CourseRepository) Delete(id uint) error {
 	return r0
 }
 
-// GetAll provides a mock function with no fields
-func (_m *CourseRepository) GetAll() ([]entity.Course, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx, limit, offset
+func (_m *CourseRepository) GetAll(ctx context.Context, limit int, offset int) ([]entity.Course, error) {
+	ret := _m.Called(ctx, limit, offset)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAll")
@@ -59,19 +60,19 @@ func (_m *CourseRepository) GetAll() ([]entity.Course, error) {
 
 	var r0 []entity.Course
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]entity.Course, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]entity.Course, error)); ok {
+		return rf(ctx, limit, offset)
 	}
-	if rf, ok := ret.Get(0).(func() []entity.Course); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) []entity.Course); ok {
+		r0 = rf(ctx, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.Course)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -79,9 +80,9 @@ func (_m *CourseRepository) GetAll() ([]entity.Course, error) {
 	return r0, r1
 }
 
-// GetByID provides a mock function with given fields: id
-func (_m *CourseRepository) GetByID(id uint) (*entity.Course, error) {
-	ret := _m.Called(id)
+// GetByID provides a mock function with given fields: ctx, id
+func (_m *CourseRepository) GetByID(ctx context.Context, id uint) (*entity.Course, error) {
+	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByID")
@@ -89,19 +90,19 @@ func (_m *CourseRepository) GetByID(id uint) (*entity.Course, error) {
 
 	var r0 *entity.Course
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*entity.Course, error)); ok {
-		return rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) (*entity.Course, error)); ok {
+		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *entity.Course); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) *entity.Course); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Course)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -109,17 +110,17 @@ func (_m *CourseRepository) GetByID(id uint) (*entity.Course, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: course
-func (_m *CourseRepository) Update(course *entity.Course) error {
-	ret := _m.Called(course)
+// Update provides a mock function with given fields: ctx, course
+func (_m *CourseRepository) Update(ctx context.Context, course *entity.Course) error {
+	ret := _m.Called(ctx, course)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Course) error); ok {
-		r0 = rf(course)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Course) error); ok {
+		r0 = rf(ctx, course)
 	} else {
 		r0 = ret.Error(0)
 	}

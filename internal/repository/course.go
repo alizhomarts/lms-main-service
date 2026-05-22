@@ -1,17 +1,18 @@
 package repository
 
 import (
+	"context"
 	"gorm.io/gorm"
 	"lms-main-service/internal/entity"
 )
 
 type (
 	CourseRepository interface {
-		Create(course *entity.Course) error
-		GetAll() ([]entity.Course, error)
-		GetByID(id uint) (*entity.Course, error)
-		Update(course *entity.Course) error
-		Delete(id uint) error
+		Create(ctx context.Context, course *entity.Course) error
+		GetAll(ctx context.Context, limit, offset int) ([]entity.Course, error)
+		GetByID(ctx context.Context, id uint) (*entity.Course, error)
+		Update(ctx context.Context, course *entity.Course) error
+		Delete(ctx context.Context, id uint) error
 	}
 
 	courseRepository struct {
@@ -20,29 +21,29 @@ type (
 )
 
 func NewCourseRepository(db *gorm.DB) CourseRepository {
-	return &courseRepository{
-		db: db,
-	}
+	return &courseRepository{db: db}
 }
 
-func (r *courseRepository) Create(course *entity.Course) error {
-	return r.db.Create(course).Error
+func (r *courseRepository) Create(ctx context.Context, course *entity.Course) error {
+	return r.db.WithContext(ctx).Create(course).Error
 }
 
-func (r *courseRepository) GetAll() ([]entity.Course, error) {
+func (r *courseRepository) GetAll(ctx context.Context, limit, offset int) ([]entity.Course, error) {
 	var courses []entity.Course
 
-	err := r.db.
+	err := r.db.WithContext(ctx).
 		Preload("Chapters").
+		Limit(limit).
+		Offset(offset).
 		Find(&courses).Error
 
 	return courses, err
 }
 
-func (r *courseRepository) GetByID(id uint) (*entity.Course, error) {
+func (r *courseRepository) GetByID(ctx context.Context, id uint) (*entity.Course, error) {
 	var course entity.Course
 
-	err := r.db.
+	err := r.db.WithContext(ctx).
 		Preload("Chapters").
 		First(&course, id).Error
 
@@ -53,10 +54,10 @@ func (r *courseRepository) GetByID(id uint) (*entity.Course, error) {
 	return &course, nil
 }
 
-func (r *courseRepository) Update(course *entity.Course) error {
-	return r.db.Save(course).Error
+func (r *courseRepository) Update(ctx context.Context, course *entity.Course) error {
+	return r.db.WithContext(ctx).Save(course).Error
 }
 
-func (r *courseRepository) Delete(id uint) error {
-	return r.db.Delete(&entity.Course{}, id).Error
+func (r *courseRepository) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&entity.Course{}, id).Error
 }
